@@ -1,0 +1,33 @@
+----------------------------------------------------------------
+LIBRARY ieee;
+USE ieee.std_logic_1164.all;
+USE IEEE.NUMERIC_STD.ALL;
+----------------------------------------------------------------
+ENTITY ball_fsm IS
+	PORT	(	clk				:	IN		STD_LOGIC;
+				rst				:	IN		STD_LOGIC;
+				ball_pos			:	OUT	STD_LOGIC_VECTOR(12 DOWNTO 0)
+	);
+END ENTITY ball_fsm;
+----------------------------------------------------------------
+ARCHITECTURE fsm OF ball_fsm IS
+	TYPE state IS (start, move);
+	SIGNAL pr_state, nx_state	:	state;
+	SIGNAL ball_pos				: INTEGER RANGE 0 TO 799 := ;
+	
+BEGIN 
+	-------------------------------------------------------------
+	--                 LOWER SECTION OF FSM                    --
+	-------------------------------------------------------------
+	sequential: PROCESS(rst, clk)
+	BEGIN
+			IF(ball_pos <= 618)THEN 
+				ball_pos <= ball_pos + 5;
+			ELSE
+				ball_pos <=12;
+			END IF;
+			ball_pos <= STD_LOGIC_VECTOR(TO_UNSIGNED(618,10));
+		
+	END PROCESS sequential;
+	
+END ARCHITECTURE fsm;

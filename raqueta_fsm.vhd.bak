@@ -1,0 +1,67 @@
+----------------------------------------------------------------
+LIBRARY ieee;
+USE ieee.std_logic_1164.all;
+USE IEEE.NUMERIC_STD.ALL;
+----------------------------------------------------------------
+ENTITY raqueta_fsm IS
+	PORT	(	clk				:	IN		STD_LOGIC;
+				rst				:	IN		STD_LOGIC;
+				rq_xprev			:	IN		STD_LOGIC;
+				rq_yprev			:	IN		STD_LOGIC;
+				cmd				:	IN		STD_LOGIC_VECTOR(1 DOWNTO 0);
+				enanxtp			:  OUT   STD_LOGIC;
+				raq_y				:	OUT	STD_LOGIC(11 DOWNTO 0)
+	);
+END ENTITY raqueta_fsm;
+----------------------------------------------------------------
+ARCHITECTURE fsm OF raqueta_fsm IS
+	TYPE state IS (start, move);
+	SIGNAL pr_state, nx_state	:	state;
+	SIGNAL rq_y				: INTEGER RANGE 0 TO 1066 := 0;
+	
+BEGIN
+	-------------------------------------------------------------
+	--                 LOWER SECTION OF FSM                    --
+	-------------------------------------------------------------
+	sequential: PROCESS(RST, clk)
+	BEGIN
+		IF (rst = '1') THEN
+			pr_state	<=	st0;
+		ELSIF (rising_edge(clk)) THEN
+			pr_state	<=	nx_state;
+		END IF;
+	END PROCESS sequential;
+	
+	-------------------------------------------------------------
+	--                 UPPER SECTION OF FSM                    --
+	-------------------------------------------------------------
+	combinational: PROCESS(pr_state, cmd)
+	BEGIN
+		CASE pr_state IS
+			WHEN start	=>
+				rq_y		<=	558;
+				IF ((cmd(0) = '0') AND (cmd(1) = '1')) THEN
+					nx_state	<= move;
+				ELSIF ((cmd(0) = '1') AND (cmd(1) = '0')) THEN
+					nx_state	<= down;
+				ELSE
+					nx_state	<= move;
+				END IF;
+			
+			WHEN move	=>
+				IF ((cmd(0) = '0') AND (cmd(1) = '1')) THEN
+					IF(rq_y >= 161) THEN
+						rq_y <= rq_y + 1;
+					ELSE
+						rq_y <= rq_y;
+					END IF;
+				ELSIF ((cmd(0) = '1') AND (cmd(1) = '0')) THEN
+					IF(rq_y <= 956) THEN
+						rq_y <= rq_y - 1;
+					ELSE
+						rq_y <= rq_y;
+					END IF;
+				END IF;
+		END CASE;
+	END PROCESS combinational;
+END ARCHITECTURE fsm;

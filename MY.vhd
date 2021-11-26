@@ -1,0 +1,23 @@
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+USE IEEE.NUMERIC_STD.ALL;
+
+PACKAGE MY IS
+	PROCEDURE SQ(SIGNAL Xcur,Ycur,Xpos,Ypos :IN INTEGER;SIGNAL rgb:OUT STD_LOGIC_VECTOR(3 DOWNTO 0);
+		SIGNAL draw: OUT STD_LOGIC);
+	END MY;
+
+	PACKAGE BODY MY IS
+		PROCEDURE SQ(SIGNAL Xcur,Ycur,Xpos,Ypos :IN INTEGER;
+						 SIGNAL rgb						 :OUT STD_LOGIC_VECTOR(3 DOWNTO 0);
+						 SIGNAL draw					 : OUT STD_LOGIC) IS
+	BEGIN 
+		IF(Xcur>Xpos AND Xcur<(Xpos+10) AND Ycur>Ypos AND Ycur<(Ypos+10)) THEN
+			rgb <= "1111";
+			draw <= '1';
+		ELSE 
+			rgb <= "0000";
+			draw <= '0';
+		END IF;
+	END SQ;
+END MY;
